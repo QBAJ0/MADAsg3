@@ -14,13 +14,13 @@ import { Filter } from 'bad-words';
 const commentFilter = new Filter({ placeHolder: '*' });
 
 const theme = {
-  background: '#fafafa',   // Clean background
-  surface: '#ffffff',      // Input & Card background
-  textMain: '#3e2723',     // Dark headings
-  accent: '#D8A48F',       // Status text
-  brandPrimary: '#A78682', // Buttons & Main borders
-  warningBg: '#E7C6C2',    // Alert background & Disabled state
-  muted: '#8d6e63',        // Placeholders & secondary text
+  background: '#fafafa',   
+  surface: '#ffffff',      
+  textMain: '#3e2723',     
+  accent: '#D8A48F',       
+  brandPrimary: '#A78682', 
+  warningBg: '#E7C6C2',    
+  muted: '#8d6e63',        
 };
 
 type CheckOutcome = 'idle' | 'clean' | 'profane';
@@ -64,7 +64,7 @@ export default function App() {
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         
         <View style={styles.header}>
-          <Text style={styles.title}>STEMM Lab Safety Filter</Text>
+          <Text style={styles.title}>STEMM Lab WordFilter</Text>
         </View>
 
         <Text style={styles.label}>Your reflection or observation</Text>
