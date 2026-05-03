@@ -11,13 +11,17 @@ import {
 } from 'react-native';
 import { Filter } from 'bad-words';
 
-/**
- * The filter keeps a blocklist of words and compares the student comment against it.
- * isProfane() answers "does this text contain any blocked word?"
- * clean() returns the same text but with those words replaced by asterisks so you can
- * preview a safer version without posting the original wording.
- */
 const commentFilter = new Filter({ placeHolder: '*' });
+
+const theme = {
+  background: '#fafafa',   // Clean background
+  surface: '#ffffff',      // Input & Card background
+  textMain: '#3e2723',     // Dark headings
+  accent: '#D8A48F',       // Status text
+  brandPrimary: '#A78682', // Buttons & Main borders
+  warningBg: '#E7C6C2',    // Alert background & Disabled state
+  muted: '#8d6e63',        // Placeholders & secondary text
+};
 
 type CheckOutcome = 'idle' | 'clean' | 'profane';
 
@@ -34,6 +38,8 @@ export default function App() {
 
   const handleCheckComment = () => {
     const text = comment.trim();
+    if (!text) return;
+
     const hasProfanity = commentFilter.isProfane(text);
 
     if (hasProfanity) {
@@ -47,7 +53,7 @@ export default function App() {
 
   const handleSubmitComment = () => {
     if (outcome !== 'clean') return;
-    Alert.alert('Submitted', 'Your comment was sent successfully.');
+    Alert.alert('STEMM Lab', 'Reflection submitted successfully.');
   };
 
   const canSubmit = outcome === 'clean';
@@ -55,64 +61,62 @@ export default function App() {
   return (
     <View style={styles.screen}>
       <StatusBar style="dark" />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        
         <View style={styles.header}>
-          <Text style={styles.title}>STEMM Lab Comment Safety Filter</Text>
-          <Text style={styles.subtitle}>Activity: Reaction Board Challenge</Text>
+          <Text style={styles.title}>STEMM Lab Safety Filter</Text>
         </View>
 
-        <Text style={styles.label}>Your reflection or comment</Text>
+        <Text style={styles.label}>Your reflection or observation</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.field, styles.mainField]}
           value={comment}
           onChangeText={onCommentChange}
-          placeholder="Type your reflection here..."
-          placeholderTextColor="#9e9e9e"
+          placeholder="Type here..."
+          placeholderTextColor={theme.muted}
           multiline
           textAlignVertical="top"
         />
 
         <Pressable
           style={({ pressed }) => [
-            styles.primaryButton,
-            pressed && styles.primaryButtonPressed,
+            styles.button,
+            { backgroundColor: theme.brandPrimary, opacity: pressed ? 0.8 : 1 }
           ]}
           onPress={handleCheckComment}
         >
-          <Text style={styles.primaryButtonText}>Check Comment</Text>
+          <Text style={styles.buttonText}>Check Comment</Text>
         </Pressable>
 
         {outcome === 'clean' && (
-          <View style={styles.resultBoxSafe}>
-            <Text style={styles.resultTextSafe}>Comment is safe to submit.</Text>
+          <View style={[styles.resultCard, { borderColor: theme.brandPrimary }]}>
+            <Text style={styles.resultOk}>Comment is safe to submit.</Text>
           </View>
         )}
 
         {outcome === 'profane' && (
-          <View style={styles.resultBoxUnsafe}>
-            <Text style={styles.resultTextUnsafe}>Inappropriate language detected</Text>
-            <Text style={styles.cleanedLabel}>Cleaned Version</Text>
-            <Text style={styles.cleanedText}>{cleanedVersion}</Text>
+          <View style={[styles.resultCard, styles.resultCardWarn]}>
+            <Text style={styles.resultWarn}>Inappropriate language detected</Text>
+            <TextInput
+              style={[styles.field, styles.cleanedField]}
+              value={cleanedVersion}
+              editable={false}
+              multiline
+              showSoftInputOnFocus={false}
+            />
           </View>
         )}
 
         <Pressable
-          style={({ pressed }) => [
-            styles.submitButton,
-            !canSubmit && styles.submitButtonDisabled,
-            canSubmit && pressed && styles.submitButtonPressed,
+          style={[
+            styles.button,
+            { backgroundColor: theme.brandPrimary },
+            !canSubmit && { backgroundColor: theme.warningBg, opacity: 0.6 }
           ]}
           onPress={handleSubmitComment}
           disabled={!canSubmit}
         >
-          <Text
-            style={[styles.submitButtonText, !canSubmit && styles.submitButtonTextDisabled]}
-          >
-            Submit Comment
-          </Text>
+          <Text style={styles.buttonText}>Submit Reflection</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -122,114 +126,78 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#f5f7fb',
+    backgroundColor: theme.background,
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 48,
+    paddingTop: 60,
     paddingBottom: 32,
   },
   header: {
-    marginBottom: 24,
+    marginBottom: 30,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#1a237e',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#3949ab',
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.textMain,
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#37474f',
-    marginBottom: 8,
+    color: theme.textMain,
+    marginBottom: 10,
   },
-  input: {
+  field: {
     minHeight: 140,
-    borderWidth: 1,
-    borderColor: '#cfd8dc',
-    borderRadius: 12,
-    padding: 14,
+    borderWidth: 2,
+    borderRadius: 15,
+    padding: 15,
     fontSize: 16,
-    backgroundColor: '#fff',
-    marginBottom: 16,
+    backgroundColor: theme.surface,
+    color: theme.brandPrimary,
+    marginBottom: 20,
   },
-  primaryButton: {
-    backgroundColor: '#3949ab',
-    paddingVertical: 14,
-    borderRadius: 12,
+  mainField: {
+    borderColor: theme.brandPrimary,
+  },
+  cleanedField: {
+    minHeight: 100,
+    marginBottom: 0,
+    borderColor: theme.brandPrimary,
+    color: theme.muted,
+  },
+  button: {
+    paddingVertical: 16,
+    borderRadius: 15,
     alignItems: 'center',
     marginBottom: 20,
   },
-  primaryButtonPressed: {
-    opacity: 0.9,
+  buttonText: {
+    color: theme.surface,
+    fontSize: 18,
+    fontWeight: '700',
   },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '600',
-  },
-  resultBoxSafe: {
-    backgroundColor: '#e8f5e9',
+  resultCard: {
     borderRadius: 12,
     padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#a5d6a7',
+    marginBottom: 24,
+    borderWidth: 2,
+    backgroundColor: theme.surface,
   },
-  resultTextSafe: {
-    color: '#1b5e20',
+  resultCardWarn: {
+    backgroundColor: theme.warningBg,
+    borderColor: theme.brandPrimary,
+  },
+  resultOk: {
+    color: theme.accent,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    textAlign: 'center',
   },
-  resultBoxUnsafe: {
-    backgroundColor: '#ffebee',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ef9a9a',
-  },
-  resultTextUnsafe: {
-    color: '#b71c1c',
+  resultWarn: {
+    color: theme.textMain,
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  cleanedLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#c62828',
-    marginBottom: 6,
-  },
-  cleanedText: {
-    fontSize: 15,
-    color: '#424242',
-    lineHeight: 22,
-  },
-  submitButton: {
-    backgroundColor: '#00897b',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  submitButtonDisabled: {
-    backgroundColor: '#bdbdbd',
-  },
-  submitButtonPressed: {
-    opacity: 0.92,
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '600',
-  },
-  submitButtonTextDisabled: {
-    color: '#f5f5f5',
+    fontWeight: '700',
+    marginBottom: 8,
   },
 });
