@@ -64,7 +64,7 @@ export default function App() {
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         
         <View style={styles.header}>
-          <Text style={styles.title}>STEMM Lab WordFilter</Text>
+          <Text style={styles.title}>STEMM Lab Word Filter</Text>
         </View>
 
         <Text style={styles.label}>Your reflection or observation</Text>
